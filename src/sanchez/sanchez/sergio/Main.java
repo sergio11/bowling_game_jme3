@@ -2,6 +2,7 @@ package sanchez.sanchez.sergio;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.TextureKey;
+import com.jme3.audio.AudioNode;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.light.DirectionalLight;
@@ -170,6 +171,27 @@ public class Main extends SimpleApplication {
         
     }
     
+    /**
+     * Play Ambient Sound
+     */
+    public void playAmbientSound() {
+
+        //Sonido ambiente
+        AudioNode ambientSound = new AudioNode(assetManager, 
+                "Sound/Environment/River.ogg", false);
+        
+        ambientSound.setLooping(true);
+        // configure volume
+        ambientSound.setVolume(0.2f);
+        
+        //Add the ambient sound to the graph of the scene
+        rootNode.attachChild(ambientSound);
+        
+        // start
+        ambientSound.play();
+
+    }
+    
     @Override
     public void simpleInitApp() {
 
@@ -195,6 +217,9 @@ public class Main extends SimpleApplication {
 
         // Ponemos un color de fondo azul oscuro
         viewPort.setBackgroundColor(new ColorRGBA(0f, 0f, 0.2f, 0));
+        
+        // Reproducir sonido ambiente
+        playAmbientSound();
         
         // ¡Bola va!
         hazBola();
