@@ -14,6 +14,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
@@ -30,7 +31,7 @@ public class Main extends SimpleApplication {
     }
     
     private BulletAppState  bulletAppState;
-    private Material        ballsMat, wallMat, floorMat;
+    private Material        ballsMat, wallMat, floorMat, boloMat;
     
     /**
      * Load Materials
@@ -67,6 +68,11 @@ public class Main extends SimpleApplication {
         ballsMat.setTexture("DiffuseMap", assetManager.loadTexture("Textures/BallMp12.jpg"));
 
         ballsMat.setFloat("Shininess", 1);
+       
+        boloMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+
+        boloMat.setTexture("DiffuseMap", assetManager.loadTexture("Textures/bowling.jpg"));
+        boloMat.setFloat("Shininess", 1);
  
     }
     
@@ -192,6 +198,54 @@ public class Main extends SimpleApplication {
 
     }
     
+    /**
+     * Num of rows.
+     * @param rows 
+     */
+    public void showBowling(final Integer rows) {
+        
+        // Start Position on x-axis
+        final Float startPosition = 2.0f;
+        // Start Position on z-axis
+        final Integer initialDistance = -8; 
+        // Bowling Separation
+        final Float bowlingSeparation = -1.0f;
+        // separation on the z-axis
+        final Integer distanceSeparation = 1;
+   
+        final Float separationRow = -0.5f;
+        
+        for(int i = rows, s = 0; i > 0; i--, s++){
+            
+            final Float initialPosition = startPosition + (s * separationRow);
+            
+            for(int j=0; j < i; j++){
+                
+                final Geometry boloGeo = new Geometry("Bolo", 
+                    new Cylinder(10, 15, 0.30f, 2.5f, true));
+                
+                boloGeo.setLocalTranslation(
+                        initialPosition + (bowlingSeparation * j) , 
+                        0.75f, 
+                        initialDistance + ( distanceSeparation * s));
+                
+                // Vertical
+                boloGeo.rotate((float) Math.PI / -2.0f, 0, 0);
+                // Configure material
+                boloGeo.setMaterial(boloMat);
+                
+                rootNode.attachChild(boloGeo);
+                
+                final RigidBodyControl rigidBodyControl = new RigidBodyControl(1f);
+                boloGeo.addControl(rigidBodyControl);
+                //Agregamos gravedas
+                bulletAppState.getPhysicsSpace().setGravity(new Vector3f(0, -6, 0));
+                bulletAppState.getPhysicsSpace().add(rigidBodyControl);
+            }
+        }
+ 
+    }
+    
     @Override
     public void simpleInitApp() {
 
@@ -216,10 +270,13 @@ public class Main extends SimpleApplication {
         cam.lookAt(new Vector3f(0, 2, 0), Vector3f.UNIT_Y);
 
         // Ponemos un color de fondo azul oscuro
-        viewPort.setBackgroundColor(new ColorRGBA(0f, 0f, 0.2f, 0));
+        viewPort.setBackgroundColor(new ColorRGBA(0f, 0f, 80f, 0));
         
         // Reproducir sonido ambiente
         playAmbientSound();
+        
+        // Show Six Rows
+        showBowling(6);
         
         // ¡Bola va!
         hazBola();
@@ -228,7 +285,7 @@ public class Main extends SimpleApplication {
     public void hazBola() {
         
         // Crear una esfera de 40 centímetros de diámetro
-        Sphere esfera = new Sphere(32, 32, 0.4f);
+        Sphere esfera = new Sphere(32, 32, .7f);
 
         // Asociar la forma a una geometría nueva
         Geometry bola_geo = new Geometry("bola", esfera);
