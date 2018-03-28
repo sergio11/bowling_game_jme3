@@ -7,6 +7,7 @@ import com.jme3.audio.AudioNode;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.light.DirectionalLight;
+import com.jme3.light.SpotLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -21,12 +22,11 @@ import com.jme3.scene.shape.Sphere;
 import com.jme3.texture.Texture;
 
 /**
- *
  * @author Sergio Sánchez Sánchez
  */
 public class WorldScene {
    
-    private Material        ballsMat, wallMat, floorMat, boloMat;
+    private Material ballsMat, wallMat, floorMat, boloMat;
     
     private final AssetManager assetManager;
     private final Node rootNode;
@@ -132,27 +132,27 @@ public class WorldScene {
     }
     
     
-     /**
+    /**
      * Show Light
-     */
+    */
     private void showLight(){
     
-        // Crearemos una luz direccional que parezca venir de la parte
-        // superior derecha del jugador, por detrás.
-        DirectionalLight light = new DirectionalLight();
-
-        // de color blanco y no excesivamente brillante
-        light.setColor(ColorRGBA.White.mult(0.8f));
-
-        // proveniente de la parte superior derecha de la posición inicial
-        // del jugador, por detrás.
-        light.setDirection(new Vector3f(-1, -1, -1).normalizeLocal());
-
-        // añadir la luz al grafo
-        rootNode.addLight(light);
+        SpotLight foco = new SpotLight();
+        foco.setSpotRange(100f);  // distancia
+        // ángulos del cono: (si los ponemos en grados hay que
+        // multiplicar por la constante FastMath.DEG_TO_RAD)
+        foco.setSpotInnerAngle(5f * FastMath.DEG_TO_RAD);
+        foco.setSpotOuterAngle(45f * FastMath.DEG_TO_RAD);
+        // color blanco pero intensificado un 20% para que brille más
+        foco.setColor(ColorRGBA.White.mult(2f));
+        // posición y dirección: la de la cámara por defecto
+        foco.setPosition(cam.getLocation());
+        foco.setDirection(cam.getDirection());
+        rootNode.addLight(foco);
         
     }
     
+
         
     /**
      * Play Ambient Sound

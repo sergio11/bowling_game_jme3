@@ -31,6 +31,7 @@ public class Main extends SimpleApplication {
      * Key Board Listener
      */
     private ActionListener actionListener = new ActionListener() {
+        
         public void onAction(String name, boolean keyPressed, float tpf) {
             
             if (name.equals(THROW_BALL_CMD) && !keyPressed) {
